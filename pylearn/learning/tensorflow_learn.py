@@ -36,15 +36,20 @@ model.evaluate(x_test, y_test)
 
 print("Prediction : %s" % model.predict(x_test))
 
-tf.keras.models.save_model(model, "mnist.model");
+tf.saved_model.save(model, "mnist.model")
+tf.keras.models.save_model(model, "mnist.model2");
 print("model saved")
 
 newmodel = tf.keras.models.load_model("mnist.model")
-#NOTE: Model MUST be compiled after loading (for possible cause see https://stackoverflow.com/questions/51252555/tf-keras-models-save-model-and-optimizer-warning)
 newmodel.compile(optimizer='adam',
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
+               loss='sparse_categorical_crossentropy',
+               metrics=['accuracy'])
+
+#newmodel2 = tf.saved_model.load("mnist.model2") 
+
+#NOTE: Model MUST be compiled after loading (for possible cause see https://stackoverflow.com/questions/51252555/tf-keras-models-save-model-and-optimizer-warning)
 print("model loaded")
 
 newmodel.evaluate(x_test, y_test)
+#newmodel2.evaluate(x_test, y_test) #note, is not a keras object, does not have evaluate method
 
