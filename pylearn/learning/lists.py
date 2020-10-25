@@ -62,16 +62,16 @@ squares = [x * y for x in range(0, 3) for y in range(3,6)]
 print(squares)
 
 print(x * y for x in range(0, 3) for y in range(3,6))
-nums = [x for x in range(7,10)] #this is a list comprehension (specifically the syntax [xxx for ...], ie a x for ... DIRECTLY inside []. They should have just used a fucking function.
+nums = [x for x in range(7,10)] #this is a list comprehension (specifically the syntax [xxx for ...], ie a x for ... DIRECTLY inside []. They should have just used a function.
 print(nums)
 nums = (x for x in range(25,30)) #this just makes a generator
 print(nums)
 
-#also stupid. They changed for into a FUCKING OPERATOR! Why not just use a new fucking keyword!?!?!?!?
+#also stupid. They changed for into an OPERATOR! Why not just use a new keyword!?!?!?!?
 xgen = (x for x in range(0,3))
 print(list(xgen)) #is a list made from the generator
 ygen = (y for y in range(3,6))
-print([ygen]) #somehow is NOT a fucking list. FUCKING STUPID. Is actually just a list containing the generator
+print([ygen]) #somehow is NOT a list. STUPID. Is actually just a list containing the generator ([x for .. in ..] is special syntax for list comprehesion)
 
 #zip
 for a, b in zip(["hey", "hey", "hey"], ["ho", "ho", "ho"]):

@@ -1,8 +1,8 @@
 tensorflow supports only up to python 3.8 and has to be 64bit
 packages are downloaded by pip to Lib/site-packages
 in python functions are defined only once the def statement is reached. No magic var stuff like in javascript.
-weirdness with *vars and **dict formal parameters. Who the fuck would use both at the same time?!?
-Python prefers spaces over tabs. Fuck
+weirdness with *vars and **dict formal parameters. Who not sure of the use case of using both at the same time
+Python prefers spaces over tabs. Fortunately the IDE automatically does that for you
 Use *tuplevar to unpack a tuple/list to fill a vararg parameter
 
 Models loaded after calling tensorflow.keras.models.load_model needs to be compiled after loading
