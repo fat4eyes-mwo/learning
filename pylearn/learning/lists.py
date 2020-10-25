@@ -57,7 +57,7 @@ while squares :
 print()
 
 #more list comprehension
-#this is retarded. They just mangled their language for a little bit of conciseness that is actually LESS readable than two nested for loops. Dumbasses.
+#I don't like how they used for-in as an operator. Should have added another keyword
 squares = [x * y for x in range(0, 3) for y in range(3,6)]
 print(squares)
 
@@ -67,11 +67,11 @@ print(nums)
 nums = (x for x in range(25,30)) #this just makes a generator
 print(nums)
 
-#also retarded. They changed for into a FUCKING OPERATOR! Why not just use a new fucking keyword!?!?!?!?
+#also stupid. They changed for into a FUCKING OPERATOR! Why not just use a new fucking keyword!?!?!?!?
 xgen = (x for x in range(0,3))
 print(list(xgen)) #is a list made from the generator
 ygen = (y for y in range(3,6))
-print([ygen]) #somehow is NOT a fucking list. FUCKING RETARDED. Is actually just a list containing the generator
+print([ygen]) #somehow is NOT a fucking list. FUCKING STUPID. Is actually just a list containing the generator
 
 #zip
 for a, b in zip(["hey", "hey", "hey"], ["ho", "ho", "ho"]):
