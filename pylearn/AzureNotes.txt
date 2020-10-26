@@ -1,0 +1,1 @@
+Use Azure functions for neural net training using python (at least from their example)

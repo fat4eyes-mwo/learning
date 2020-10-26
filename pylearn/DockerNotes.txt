@@ -1,0 +1,25 @@
+Docker is apparently a virtualization tool that relies on images (app + dependencies) and runs each on a separate process. 
+Note: it is NOT using a separate VM for each image instance (just its own self-contained environment) 
+It then has shell-like commands for handling the operation of containers
+
+Docker quickstart (create image)
+	Create DockerFile (basically a build file for populating the docker image)
+	docker build --tag <image-name:[version]> <path-to-docker-file-dir>
+	(optional) docker images (lists all existing docker images)
+	docker run -p <external-port-nubmer:internal-port-number> --name <instance-name> -d <image-name>
+	
+docker-compose.yml
+	Higher level build script (combines image creation with running, can have multiple images in the same file (still creates a separate instance per image)
+	to run: docker-compose up -d (uses the docker-compose.yml file in the current directory to create and run an image)
+	
+useful commands
+	docker start|stop <image-name> : starts/stops an instance
+	docker rm <instance-name> : remove an added instance
+	docker rmi <image-name> : removes a built docker image
+	docker ps [-a] : list all running instances
+	docker logs : show log messages
+	docker push <dockerid>/<reponame> (after creating a repo in dockerhub)
+	docker pull <dockerid>/<reponame>
+	
+Notes:
+	You can push docker images to hub.docker.com (repositories). Images in here can be pushed to the standard cloud solutions
