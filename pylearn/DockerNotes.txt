@@ -20,6 +20,8 @@ useful commands
 	docker logs : show log messages
 	docker push <dockerid>/<reponame> (after creating a repo in dockerhub)
 	docker pull <dockerid>/<reponame>
+	docker update (can be used to change resource quotas at runtime)
+	docker run --memory --cpus (can be used to set cpu and memory quotas for a docker container)
 	
 Notes:
 	You can push docker images to hub.docker.com (repositories). Images in here can be pushed to the standard cloud solutions
