@@ -1,0 +1,13 @@
+Kubernetes is a cluster management tool, allows deployment, coordination and management of containers over multiple nodes
+
+Terms
+Pod/Container -> Basic working component of kubernetes. Basically just a set of docker containers (or just one docker container)
+Deployment -> A specification for deploying a number of containers. Contains what containers to deploy, the number to deploy. Kubernetes automatically distributes the containers to the available nodes depending on the coontainer
+Ingress -> Provides external access to the cluster (usually through an HTTP server)
+Service -> Manages access to multiple (identical) pods as a single entity. Usually provides task assignment and load balancing to the pods that it manages  
+
+Important commands:
+kubeadm: used for initializing clusters and cluster nodes
+	kubeadm init : creates a control plane (master node)
+	kubeadm join : executed on worker node to join a cluster
+kubectl: provides control operations for the cluster (resource management, diagnostic displays, etc)
