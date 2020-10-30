@@ -11,3 +11,6 @@ kubeadm: used for initializing clusters and cluster nodes
 	kubeadm init : creates a control plane (master node)
 	kubeadm join : executed on worker node to join a cluster
 kubectl: provides control operations for the cluster (resource management, diagnostic displays, etc)
+
+Design principles:
+Is mostly a pull architecture instead of a push architecture. The idea is to decentralize all decision making (i.e. just have the child nodes constantly request the master node for tasks as long as they have the capacity to execute them) so there does not have to be complex coordinator logic in the master node. Try to apply this same principle to your architectures.
