@@ -31,18 +31,20 @@ def mergesort(arr):
         ret_arr.reverse()
         return ret_arr 
     
-size = 1000000
-shuffled = list(range(size))
-random.shuffle(shuffled)
-#print(shuffled)
-
-tstart = time.perf_counter_ns()
-mergesort(shuffled)
-#print(mergesort(shuffled))
-print("Time: %d.10 ms" % ((time.perf_counter_ns() - tstart)/1000000))
-
-shuffled = list(range(size))
-tstart = time.perf_counter_ns()
-shuffled.sort()
-random.shuffle(shuffled)
-print("Time: %d.10 ms" % ((time.perf_counter_ns() - tstart)/1000000))
+for size in [10000, 100000, 1000000]:
+    print("Size: %d" % size)
+    shuffled = list(range(size))
+    random.shuffle(shuffled)
+    
+    tstart = time.perf_counter_ns()
+    retarr = mergesort(shuffled)
+    print(retarr[0:10], "... %d entries" % len(retarr))
+    print("Mergesort time: %d.10 ms" % ((time.perf_counter_ns() - tstart)/1000000))
+    
+    shuffled = list(range(size))
+    random.shuffle(shuffled)
+    tstart = time.perf_counter_ns()
+    shuffled.sort()
+    print(shuffled[0:10], "... %d entries" %len(shuffled))
+    print("Builtin sort time: %d.10 ms" % ((time.perf_counter_ns() - tstart)/1000000))
+    print("---\n")
