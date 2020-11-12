@@ -55,6 +55,8 @@ public class Main {
 		}
 		
 		testCollections();
+		
+		System.out.println(fib(10));
 	}
 	
 	synchronized public void doAtomic() {
@@ -103,6 +105,16 @@ public class Main {
 		}
 		
 		System.out.println(map);
+	}
+	
+	static int fib(int n) {
+		if (n == 0) {
+			return 0;
+		} else if (n == 1) {
+			return 1;
+		} else {
+			return fib(n-1) + fib(n-2);
+		}
 	}
 }
 
