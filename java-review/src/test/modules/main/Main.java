@@ -1,7 +1,12 @@
 package test.modules.main;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -48,6 +53,8 @@ public class Main {
 		for (String key : map.keySet()) {
 			System.out.println(String.format("%s %s", key, map.get(key)));
 		}
+		
+		testCollections();
 	}
 	
 	synchronized public void doAtomic() {
@@ -73,6 +80,30 @@ public class Main {
 	};
 	
 	Function<Integer, Integer> f = (x) -> 12;
+	
+	static void testCollections() {
+		Map<String, List<String>> map = new LinkedHashMap<String ,List<String>>();
+		
+		map.put("foobar", Arrays.asList(new String[] {"foo", "bar", "baz"}));
+		map.put("fizzbuzz", Arrays.asList(new String[] {"fizz", "buzz"}));
+		map.put("beepboop", Arrays.asList(new String[] {"beep", "boop"}));
+		
+		for (String key : map.keySet()) {
+			var l = map.get(key);
+			System.out.print(key + " : ");
+			boolean first = true;
+			for (var s : l) {
+				if (!first) {
+					System.out.print(", ");
+				}
+				System.out.print(s);
+				first = false;
+			}
+			System.out.println();
+		}
+		
+		System.out.println(map);
+	}
 }
 
 enum State {
