@@ -21,7 +21,12 @@ public class FutureTest {
 		
 		try {
 			System.out.println("Waiting for loadString...");
-			String s = loadString.get();
+			String s = loadString.getNow(null);
+			System.out.println("Load string: " + s);
+			s = loadString.thenApplyAsync(t -> {
+				System.out.println("The string was : " + t);
+				return "apply : " + t;
+			}).get();
 			System.out.println("Load string: " + s);
 		} catch (Exception e) {
 			System.err.println(e);
