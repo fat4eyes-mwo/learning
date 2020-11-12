@@ -3,9 +3,7 @@ package test.modules.main;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -48,6 +46,7 @@ public class Main {
 		deque.addLast("bar");
 		String dqString = deque.getFirst();
 		dqString = deque.getLast();
+		System.out.println("dqString: " + dqString);
 		
 		//map.put("Eleven", 11); //error since Map.of returns an immutable
 		for (String key : map.keySet()) {
