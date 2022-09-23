@@ -23,6 +23,7 @@ public class ContainerCount {
 		System.out.println(fullcacheSoln.containerCount(s, 1, 14) + ", iter: " + fullcacheSoln.getIterCount());
 		System.out.println(fullcacheSoln.containerCount(s, 1, 14) + ", iter: " + fullcacheSoln.getIterCount());
 		System.out.println(fullcacheSoln.containerCount(s, 2, 14) + ", iter: " + fullcacheSoln.getIterCount());
+		System.out.println(fullcacheSoln.containerCount(s, 1, 8) + ", iter: " + fullcacheSoln.getIterCount());
 		
 		
 		for (int i = 0; i < 10; i++) {
@@ -213,7 +214,7 @@ class ContainerCountIntervalCache extends ContainerListCount {
 		}
 	}
 	
-	SortedSet<IntervalCount> intervalCache = new TreeSet<>((IntervalCount a, IntervalCount b) -> {
+	TreeSet<IntervalCount> intervalCache = new TreeSet<>((IntervalCount a, IntervalCount b) -> {
 		int compare = Integer.compare(a.firstContainer, b.firstContainer);
 		if (compare != 0) {
 			return compare;
@@ -276,11 +277,11 @@ class ContainerCountIntervalCache extends ContainerListCount {
 			return null;
 		}
 		
-		IntervalCount search = new IntervalCount(firstContainer, cList.size() - 1, -1);
+		IntervalCount search = new IntervalCount(firstContainer, cList.size(), -1);
+		IntervalCount candidate = intervalCache.higher(search);
 		iterCount += intervalCache.size() > 0 ? Math.log(intervalCache.size()) / Math.log(2) : 0;
-		SortedSet<IntervalCount> tail = intervalCache.tailSet(search); //tailset is too expensive. to make this work need to traverse the tree yourself
-		for (IntervalCount candidate : tail) {
-			iterCount++;
+		while (candidate != null) {
+			
 			if (firstContainer != candidate.firstContainer) {
 				return null; //passed the intervals for our first container, did not find any match
 			}
@@ -288,6 +289,8 @@ class ContainerCountIntervalCache extends ContainerListCount {
 			if (lastContainer.getEnd() <= end) {
 				return candidate;
 			}
+			candidate = intervalCache.higher(candidate);
+			iterCount += intervalCache.size() > 0 ? Math.log(intervalCache.size()) / Math.log(2) : 0;
 		}
 		return null;
 	}
