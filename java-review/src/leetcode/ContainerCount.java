@@ -8,10 +8,10 @@ import java.util.TreeSet;
 
 public class ContainerCount {
 
-	private static final boolean PRINT_COUNTS = true;
+	private static final boolean PRINT_COUNTS = false;
 	
 	public static void main(String args[]) {
-		String s = "*|**|*|*|";
+		String s = "*|**|*|*|*";
 		
 //		ContainerCountSolution soln = new NaiveContainerCount();
 //		System.out.println(soln.containerCount(s, 1, s.length()) + ", iter: " + soln.getIterCount());
@@ -22,15 +22,16 @@ public class ContainerCount {
 //		ContainerCountSolution fullcacheSoln = new ContainerCountIntervalCache();
 //		System.out.println(fullcacheSoln.containerCount(s, 1,  s.length()) + ", iter: " + fullcacheSoln.getIterCount());
 		
-		ContainerCountSolution dpSol = new DirectDP();
+		ContainerCountSolution dpSol = new ContainerListDP();
 		System.out.println(dpSol.containerCount(s, 1,  s.length()) + ", iter: " + dpSol.getIterCount());
 		System.out.println(dpSol.containerCount(s, s.length(),  s.length()) + ", iter: " + dpSol.getIterCount());
 		
 		for (int i = 0; i < 10; i++) {
-			generateTestAndRun(10000, 0.5, 10, 
-					new NaiveContainerCount(), 
+			generateTestAndRun(10000, 0.5, 10_000_000, 
+//					new NaiveContainerCount(), 
 					new ContainerListCount(),
-					new ContainerCountIntervalCache()
+					new ContainerCountIntervalCache(),
+					new ContainerListDP()
 					);
 		}
 	}
@@ -106,22 +107,23 @@ class NaiveContainerCount implements ContainerCountSolution {
 	}
 }
 
-//in progress, having trouble with the DP condition
-class DirectDP extends ContainerListCount {
+//DP does not pay off until >1_000_000 queries
+class ContainerListDP extends ContainerListCount {
 	int[][] dp = null;
 	
 	private long iterCount = 0;
 	
 	@Override
 	protected int containerCountInternal(String s, int start, int end) {
-		System.out.println(s);
+//		System.out.println(s);
 		calculateDP(s);
-		for (int i = 0; i < s.length(); i++) {
-			for (int j = 0; j < s.length(); j++) {
-				System.out.print(dp[i][j] + " ");
-			}
-			System.out.println();
-		}
+//		for (int i = 0; i < s.length(); i++) {
+//			for (int j = 0; j < s.length(); j++) {
+//				System.out.print(dp[i][j] + " ");
+//			}
+//			System.out.println();
+//		}
+		iterCount++;
 		return dp[start][end];
 	}
 	
@@ -130,27 +132,37 @@ class DirectDP extends ContainerListCount {
 			return;
 		}
 		dp = new int[s.length()][s.length()];
+		generateCList(s);
+		if (cList.size() == 0) {
+			return; // no containers, no point in calculating DP
+		}
 		
 		int prevContainer = -1;
 		int sum = 0;
-		int prevSum = 0;
 		for (int endIdx = 0; endIdx < s.length(); endIdx++) {
-			iterCount++;
 			if (s.charAt(endIdx) == '|') {
 				if (prevContainer != -1) {
-					prevSum = sum;
 					sum += endIdx - prevContainer - 1;
 				}
-			}
-			for (int startIdx = 0; startIdx <= endIdx; startIdx++) {
-				int currSum = sum;
-				if (startIdx > prevContainer) {
-					currSum = sum - prevSum;
-				}
-				dp[startIdx][endIdx] = currSum;	
-			}
-			if (s.charAt(endIdx) == '|') {
 				prevContainer = endIdx;
+			}
+			
+			int prevSum = 0;
+			int currContainerIdx = 0;
+			for (int startIdx = 0; startIdx <= endIdx; startIdx++) {
+				iterCount++;
+				Container currContainer = currContainerIdx < cList.size() ? 
+						cList.get(currContainerIdx) :
+						null;
+				if (currContainer != null) {
+					if (startIdx == currContainer.start + 1 && currContainer.getEnd() <= endIdx) {
+						prevSum += currContainer.count;
+					} 
+					if (startIdx >= currContainer.getEnd()){
+						currContainerIdx++;
+					}
+				}
+				dp[startIdx][endIdx] = sum - prevSum;	
 			}
 		}
 	}
@@ -252,6 +264,7 @@ class ContainerListCount implements ContainerCountSolution {
 	}
 }
 
+//seems to have fewer 'iterations', but still takes 5x longer than simple container list count. Indirection cost?
 class ContainerCountIntervalCache extends ContainerListCount {
 	
 	static class ContainerInterval {
