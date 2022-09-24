@@ -13,26 +13,26 @@ public class ContainerCount {
 	public static void main(String args[]) {
 		String s = "**|****|*|**|*";
 		
-		ContainerCountSolution soln = new NaiveContainerCount();
-		System.out.println(soln.containerCount(s, 1, 14) + ", iter: " + soln.getIterCount());
-
-		ContainerCountSolution listSoln = new ContainerListCount();
-		System.out.println(listSoln.containerCount(s, 1, 14) + ", iter: " + listSoln.getIterCount());
+//		ContainerCountSolution soln = new NaiveContainerCount();
+//		System.out.println(soln.containerCount(s, 1, s.length()) + ", iter: " + soln.getIterCount());
+//
+//		ContainerCountSolution listSoln = new ContainerListCount();
+//		System.out.println(listSoln.containerCount(s, 1,  s.length()) + ", iter: " + listSoln.getIterCount());
+//		
+//		ContainerCountSolution fullcacheSoln = new ContainerCountIntervalCache();
+//		System.out.println(fullcacheSoln.containerCount(s, 1,  s.length()) + ", iter: " + fullcacheSoln.getIterCount());
 		
-		ContainerCountSolution fullcacheSoln = new ContainerCountIntervalCache();
-		System.out.println(fullcacheSoln.containerCount(s, 1, 14) + ", iter: " + fullcacheSoln.getIterCount());
-		System.out.println(fullcacheSoln.containerCount(s, 1, 14) + ", iter: " + fullcacheSoln.getIterCount());
-		System.out.println(fullcacheSoln.containerCount(s, 2, 14) + ", iter: " + fullcacheSoln.getIterCount());
-		System.out.println(fullcacheSoln.containerCount(s, 1, 8) + ", iter: " + fullcacheSoln.getIterCount());
+		ContainerCountSolution dpSol = new DirectDP();
+		System.out.println(dpSol.containerCount(s, 1,  s.length()) + ", iter: " + dpSol.getIterCount());
+		System.out.println(dpSol.containerCount(s, s.length(),  s.length()) + ", iter: " + dpSol.getIterCount());
 		
-		
-		for (int i = 0; i < 10; i++) {
-			generateTestAndRun(10000, 0.5, 50000, 
-					new NaiveContainerCount(), 
-					new ContainerListCount(),
-					new ContainerCountIntervalCache()
-					);
-		}
+//		for (int i = 0; i < 10; i++) {
+//			generateTestAndRun(10000, 0.5, 50000, 
+//					new NaiveContainerCount(), 
+//					new ContainerListCount(),
+//					new ContainerCountIntervalCache()
+//					);
+//		}
 	}
 	
 	private static void generateTestAndRun(int len, double wallProb, int numRuns, ContainerCountSolution... solnArr) {
@@ -98,6 +98,64 @@ class NaiveContainerCount implements ContainerCountSolution {
 			prevContainer = i;
 		}
 		return sum;
+	}
+	
+	@Override
+	public long getIterCount() {
+		return iterCount;
+	}
+}
+
+//in progress, having trouble with the DP condition
+class DirectDP implements ContainerCountSolution {
+	int[][] dp = null;
+	
+	private long iterCount = 0;
+	@Override
+	public int containerCount(String s, int start, int end) {
+		return containerCountInternal(s, start - 1, end - 1);
+	}
+	
+	private int containerCountInternal(String s, int start, int end) {
+		System.out.println(s);
+		calculateDP(s);
+		for (int i = 0; i < s.length(); i++) {
+			for (int j = 0; j < s.length(); j++) {
+				System.out.print(dp[i][j] + " ");
+			}
+			System.out.println();
+		}
+		return dp[start][end];
+	}
+	
+	private void calculateDP(String s) {
+		if (dp != null) {
+			return;
+		}
+		dp = new int[s.length()][s.length()];
+		
+		int prevContainer = -1;
+		int sum = 0;
+		for (int endIdx = 0; endIdx < s.length(); endIdx++) {
+			int prevSum = 0;
+			iterCount++;
+			if (s.charAt(endIdx) == '|') {
+				if (prevContainer != -1) {
+					prevSum = sum;
+					sum += endIdx - prevContainer - 1;
+				}
+			}
+			for (int startIdx = 0; startIdx <= endIdx; startIdx++) {
+				int currSum = sum;
+				if (startIdx > prevContainer) {
+					currSum = sum - prevSum;
+				}
+				dp[startIdx][endIdx] = currSum;	
+			}
+			if (s.charAt(endIdx) == '|') {
+				prevContainer = endIdx;
+			}
+		}
 	}
 	
 	@Override
@@ -198,11 +256,11 @@ class ContainerListCount implements ContainerCountSolution {
 
 class ContainerCountIntervalCache extends ContainerListCount {
 	
-	static class IntervalCount {
+	static class ContainerInterval {
 		private int firstContainer;
 		private int lastContainer;
 		private int count;
-		IntervalCount(int firstContainer, int lastContainer, int count) {
+		ContainerInterval(int firstContainer, int lastContainer, int count) {
 			this.firstContainer = firstContainer;
 			this.lastContainer = lastContainer;
 			this.count = count;
@@ -214,7 +272,8 @@ class ContainerCountIntervalCache extends ContainerListCount {
 		}
 	}
 	
-	TreeSet<IntervalCount> intervalCache = new TreeSet<>((IntervalCount a, IntervalCount b) -> {
+	//Too slow, too many intervals, the lg(n) becomes lg(n^2)
+	TreeSet<ContainerInterval> intervalCache = new TreeSet<>((ContainerInterval a, ContainerInterval b) -> {
 		int compare = Integer.compare(a.firstContainer, b.firstContainer);
 		if (compare != 0) {
 			return compare;
@@ -241,7 +300,7 @@ class ContainerCountIntervalCache extends ContainerListCount {
 			return 0;
 		}
 		
-		IntervalCount cachedInterval = getLargestInterval(start, end);
+		ContainerInterval cachedInterval = getLargestInterval(start, end);
 		if (cachedInterval != null) {
 			sum += cachedInterval.count;
 			Container lastContainer = cList.get(cachedInterval.lastContainer);
@@ -261,24 +320,29 @@ class ContainerCountIntervalCache extends ContainerListCount {
 					firstContainer = pos;
 				}
 				lastContainer = pos;
-				intervalCache.add(new IntervalCount(firstContainer, lastContainer, sum));
+				//if all computed intervals are stored the cache becomes too big to search 
+//				intervalCache.add(new ContainerInterval(firstContainer, lastContainer, sum));				
 				pos++;
 			} else {
 				break;
 			}
 		}
+		//Technically lower iterCount, but I think the indirection is killng this over just iterating through the string cList
+		if (firstContainer != -1 && lastContainer != -1) {
+			intervalCache.add(new ContainerInterval(firstContainer, lastContainer, sum));
+		}
 		
 		return sum;
 	}
 	
-	private IntervalCount getLargestInterval(int start, int end) {
+	private ContainerInterval getLargestInterval(int start, int end) {
 		int firstContainer = getFirstContainerIdx(start);
 		if (firstContainer > cList.size()) {
 			return null;
 		}
 		
-		IntervalCount search = new IntervalCount(firstContainer, cList.size(), -1);
-		IntervalCount candidate = intervalCache.higher(search);
+		ContainerInterval search = new ContainerInterval(firstContainer, cList.size(), -1);
+		ContainerInterval candidate = intervalCache.higher(search);
 		iterCount += intervalCache.size() > 0 ? Math.log(intervalCache.size()) / Math.log(2) : 0;
 		while (candidate != null) {
 			
