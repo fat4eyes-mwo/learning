@@ -8,10 +8,10 @@ import java.util.TreeSet;
 
 public class ContainerCount {
 
-	private static final boolean PRINT_COUNTS = false;
+	private static final boolean PRINT_COUNTS = true;
 	
 	public static void main(String args[]) {
-		String s = "**|****|*|**|*";
+		String s = "*|**|*|*|";
 		
 //		ContainerCountSolution soln = new NaiveContainerCount();
 //		System.out.println(soln.containerCount(s, 1, s.length()) + ", iter: " + soln.getIterCount());
@@ -26,13 +26,13 @@ public class ContainerCount {
 		System.out.println(dpSol.containerCount(s, 1,  s.length()) + ", iter: " + dpSol.getIterCount());
 		System.out.println(dpSol.containerCount(s, s.length(),  s.length()) + ", iter: " + dpSol.getIterCount());
 		
-//		for (int i = 0; i < 10; i++) {
-//			generateTestAndRun(10000, 0.5, 50000, 
-//					new NaiveContainerCount(), 
-//					new ContainerListCount(),
-//					new ContainerCountIntervalCache()
-//					);
-//		}
+		for (int i = 0; i < 10; i++) {
+			generateTestAndRun(10000, 0.5, 10, 
+					new NaiveContainerCount(), 
+					new ContainerListCount(),
+					new ContainerCountIntervalCache()
+					);
+		}
 	}
 	
 	private static void generateTestAndRun(int len, double wallProb, int numRuns, ContainerCountSolution... solnArr) {
@@ -107,16 +107,13 @@ class NaiveContainerCount implements ContainerCountSolution {
 }
 
 //in progress, having trouble with the DP condition
-class DirectDP implements ContainerCountSolution {
+class DirectDP extends ContainerListCount {
 	int[][] dp = null;
 	
 	private long iterCount = 0;
-	@Override
-	public int containerCount(String s, int start, int end) {
-		return containerCountInternal(s, start - 1, end - 1);
-	}
 	
-	private int containerCountInternal(String s, int start, int end) {
+	@Override
+	protected int containerCountInternal(String s, int start, int end) {
 		System.out.println(s);
 		calculateDP(s);
 		for (int i = 0; i < s.length(); i++) {
@@ -136,8 +133,8 @@ class DirectDP implements ContainerCountSolution {
 		
 		int prevContainer = -1;
 		int sum = 0;
+		int prevSum = 0;
 		for (int endIdx = 0; endIdx < s.length(); endIdx++) {
-			int prevSum = 0;
 			iterCount++;
 			if (s.charAt(endIdx) == '|') {
 				if (prevContainer != -1) {
@@ -202,9 +199,7 @@ class ContainerListCount implements ContainerCountSolution {
 	
 	protected int containerCountInternal(String s, int start, int end) {
 		int sum = 0;
-		if (!isCListGenerated) {
-			generateCList(s);
-		}
+		generateCList(s);
 		if (cList.size() == 0) {
 			return 0;
 		}
@@ -234,6 +229,9 @@ class ContainerListCount implements ContainerCountSolution {
 	}
 	
 	protected void generateCList(String s) {
+		if (isCListGenerated) {
+			return;
+		}
 		int start = 0;
 		int end = s.length() - 1;
 		int prevContainer = -1;
