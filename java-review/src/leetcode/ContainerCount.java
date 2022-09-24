@@ -26,8 +26,20 @@ public class ContainerCount {
 		System.out.println(dpSol.containerCount(s, 1,  s.length()) + ", iter: " + dpSol.getIterCount());
 		System.out.println(dpSol.containerCount(s, s.length(),  s.length()) + ", iter: " + dpSol.getIterCount());
 		
-		for (int i = 0; i < 10; i++) {
-			generateTestAndRun(10000, 0.5, 10_000_000, 
+		for (int i = 0; i < 11; i++) {
+			System.out.println("Random");
+			generateTestAndRun(
+					generateTestString(10000, 0.5), 
+					1_000_000, 
+//					new NaiveContainerCount(), 
+					new ContainerListCount(),
+					new ContainerCountIntervalCache(),
+					new ContainerListDP()
+					);
+			System.out.println("Max containers");
+			generateTestAndRun(
+					generateAlternating(10000), 
+					1_000_000, 
 //					new NaiveContainerCount(), 
 					new ContainerListCount(),
 					new ContainerCountIntervalCache(),
@@ -36,16 +48,29 @@ public class ContainerCount {
 		}
 	}
 	
-	private static void generateTestAndRun(int len, double wallProb, int numRuns, ContainerCountSolution... solnArr) {
+	private static String generateTestString(int len, double wallProb) {
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < len; i++) {
 			char nextChar = Math.random() < wallProb ? '|' : '*';
 			s.append(nextChar);
 		}
-		
-		String input = s.toString();
-//		System.out.println("input: " + input);
-		
+		return s.toString();
+	}
+	
+	private static String generateAlternating(int len) {
+		StringBuilder s = new StringBuilder();
+		for (int i = 0; i < len; i++) {
+			if (i%2==0) {
+				s.append('|');
+			} else {
+				s.append('*');
+			}
+		}
+		return s.toString();
+	}
+	
+	private static void generateTestAndRun(String input, int numRuns, ContainerCountSolution... solnArr) {
+		int len = input.length();
 		List<int[]> queries = new ArrayList<>();
 		for (int i = 0; i < numRuns; i++) {
 			int start = (int) Math.floor(Math.random() * (double)len) + 1;
