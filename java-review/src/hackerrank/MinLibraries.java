@@ -73,15 +73,15 @@ public class MinLibraries {
 
 		public static long roadsAndLibraries(int n, int c_lib, int c_road, List<List<Integer>> cities) {
 			// Write your code here
-			System.out.println("n: " + n + " c_lib:" + c_lib + " c_road:" + c_road + " csize: " + cities.size());
+//			System.out.println("n: " + n + " c_lib:" + c_lib + " c_road:" + c_road + " csize: " + cities.size());
 			if (c_lib < c_road) {
 				long ret = (long)n * (long)c_lib;
-				System.out.println("Non-MSF return: " + ret);
+//				System.out.println("Non-MSF return: " + ret);
 				return ret;
 			}
 			long[] network = findMSF(cities, n);
 			long ret = (long)c_lib * network[0] + (long)c_road * network[1];
-			System.out.println("MSF return: " + ret);
+//			System.out.println("MSF return: " + ret);
 			return ret;
 		}
 
@@ -148,7 +148,16 @@ public class MinLibraries {
 					if (currNode.connections.size() == 0) {
 						continue;
 					}
-					Integer nextNodeId = currNode.connections.iterator().next();
+					Integer nextNodeId = null;
+					for (Integer nextId : currNode.connections) {
+						if (!visited.contains(nextId)) {
+							nextNodeId = nextId;
+							break;
+						}
+					}
+					if (nextNodeId == null) {
+						continue;
+					}
 					Node nextNode = graph.get(nextNodeId);
 					currNode.removeConnection(nextNodeId);
 					nextNode.removeConnection(nodeId);
@@ -168,7 +177,7 @@ public class MinLibraries {
 					}
 				}
 			}
-			System.out.println("trees: " + trees + " edges: " + edges);
+//			System.out.println("trees: " + trees + " edges: " + edges);
 			return new long[] { trees, edges };
 		}
 
