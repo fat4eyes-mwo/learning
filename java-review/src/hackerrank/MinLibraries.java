@@ -141,7 +141,7 @@ public class MinLibraries {
 			Set<Integer> visited = new HashSet<>();
 			Set<Integer> unvisited = new HashSet<>(graph.keySet());
 
-			while (visited.size() < n) {
+			while (unvisited.size() > 0) {
 				boolean foundEdge = false;
 				for (Integer nodeId : visited) {
 					Node currNode = graph.get(nodeId);
@@ -169,6 +169,7 @@ public class MinLibraries {
 					break;
 				}
 				if (!foundEdge) {
+					visited.clear();
 					Integer nextStartToRemove = null;
 					for (Integer nextStart : unvisited) {
 						if (!visited.contains(nextStart)) {
