@@ -28,7 +28,7 @@ public class MinLibraries {
 	        if (c_lib < c_road) {
 	            return n * c_lib;
 	        }
-	        int[] network = findMSF(cities, n);
+	        long[] network = findMSF(cities, n);
 	        return c_lib * network[0] + c_road * network[1];
 	    }
 	    
@@ -51,9 +51,9 @@ public class MinLibraries {
 	        }
 	    }
 	    //returns [num trees, num edges]
-	    private static int[] findMSF(List<List<Integer>> cities, int n) {
-	        int trees = 0;
-	        int edges = 0;
+	    private static long[] findMSF(List<List<Integer>> cities, int n) {
+	        long trees = 0;
+	        long edges = 0;
 	        HashMap<Integer, Node> graph = new LinkedHashMap<>();
 
 	        //initialize graph with no roads
@@ -111,7 +111,7 @@ public class MinLibraries {
 	            }
 	        }
 	        System.out.println("trees: " + trees + " edges: " + edges);
-	        return new int[] {trees, edges};
+	        return new long[] {trees, edges};
 	    }
 
 	}
