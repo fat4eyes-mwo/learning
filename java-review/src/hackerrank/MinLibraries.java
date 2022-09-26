@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 public class MinLibraries {
 	public static void main(String[] args) throws IOException {
-		String filename = "MinLibraries.Test02";
+		String filename = "MinLibraries.Test04";
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(MinLibraries.class.getResourceAsStream(filename + ".in")));
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename + ".out"));
 
@@ -72,16 +72,15 @@ public class MinLibraries {
 		 */
 
 		public static long roadsAndLibraries(int n, int c_lib, int c_road, List<List<Integer>> cities) {
-			// Write your code here
-//			System.out.println("n: " + n + " c_lib:" + c_lib + " c_road:" + c_road + " csize: " + cities.size());
+			System.out.println("n: " + n + " c_lib:" + c_lib + " c_road:" + c_road + " csize: " + cities.size());
 			if (c_lib < c_road) {
 				long ret = (long)n * (long)c_lib;
-//				System.out.println("Non-MSF return: " + ret);
+				System.out.println("Non-MSF return: " + ret);
 				return ret;
 			}
 			long[] network = findMSF(cities, n);
 			long ret = (long)c_lib * network[0] + (long)c_road * network[1];
-//			System.out.println("MSF return: " + ret);
+			System.out.println("MSF return: " + ret);
 			return ret;
 		}
 
@@ -140,6 +139,7 @@ public class MinLibraries {
 			}
 
 			Set<Integer> visited = new HashSet<>();
+			Set<Integer> unvisited = new HashSet<>(graph.keySet());
 
 			while (visited.size() < n) {
 				boolean foundEdge = false;
@@ -162,22 +162,26 @@ public class MinLibraries {
 					currNode.removeConnection(nextNodeId);
 					nextNode.removeConnection(nodeId);
 					visited.add(nextNodeId);
+					unvisited.remove(nextNodeId);
 					edges++;
 //					System.out.println("Edge: " + nodeId + "-" + nextNodeId);
 					foundEdge = true;
 					break;
 				}
 				if (!foundEdge) {
-					for (Integer nextStart : graph.keySet()) {
+					Integer nextStartToRemove = null;
+					for (Integer nextStart : unvisited) {
 						if (!visited.contains(nextStart)) {
 							visited.add(nextStart);
+							nextStartToRemove = nextStart;
 							trees++;
 							break;
 						}
 					}
+					unvisited.remove(nextStartToRemove);
 				}
 			}
-//			System.out.println("trees: " + trees + " edges: " + edges);
+			System.out.println("trees: " + trees + " edges: " + edges);
 			return new long[] { trees, edges };
 		}
 
