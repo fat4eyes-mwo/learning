@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toList;
 
 public class MinLibraries {
 	public static void main(String[] args) throws IOException {
-		String filename = "MinLibraries.Test04";
+		String filename = "MinLibraries.Test07";
 		BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(MinLibraries.class.getResourceAsStream(filename + ".in")));
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filename + ".out"));
@@ -139,6 +139,7 @@ public class MinLibraries {
 				toNode.addConnection(nodeId);
 			}
 
+			//prims algo
 			Set<Integer> visited = new HashSet<>();
 			Set<Integer> unvisited = new HashSet<>(graph.keySet());
 			Set<Integer> visitedToRemove = new HashSet<>();
@@ -151,11 +152,18 @@ public class MinLibraries {
 						continue;
 					}
 					Integer nextNodeId = null;
+					Set<Integer> connectionsToRemove = new HashSet<>();
 					for (Integer nextId : currNode.connections) {
 						if (!visited.contains(nextId)) {
 							nextNodeId = nextId;
 							break;
+						} else {
+							connectionsToRemove.add(nextId);
 						}
+					}
+					currNode.connections.removeAll(connectionsToRemove);
+					if (currNode.connections.size() == 0) {
+						visitedToRemove.add(currNode.id);
 					}
 					if (nextNodeId == null) {
 						continue;
@@ -172,11 +180,11 @@ public class MinLibraries {
 				}
 				for (Integer toRemove : visitedToRemove) {
 					visited.remove(toRemove);
-					graph.remove(toRemove);
 				}
 				visitedToRemove.clear();
 
 				if (!foundEdge) {
+					visited.clear();
 					Integer nextStartToRemove = null;
 					for (Integer nextStart : unvisited) {
 						visited.add(nextStart);
