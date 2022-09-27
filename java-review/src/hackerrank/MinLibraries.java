@@ -113,12 +113,6 @@ public class MinLibraries {
 			long edges = 0;
 			HashMap<Integer, Node> graph = new LinkedHashMap<>();
 
-			// initialize graph with no roads
-			for (int i = 1; i <= n; i++) {
-				if (graph.get(i) == null) {
-					graph.put(i, new Node(i));
-				}
-			}
 			// build graph from edges
 			for (List<Integer> edge : cities) {
 				int nodeId = edge.get(0);
@@ -137,6 +131,13 @@ public class MinLibraries {
 				}
 				toNode.addConnection(nodeId);
 			}
+			// isolated cities are a tree on their own
+			for (int i = 1; i <= n; i++) {
+				if (graph.get(i) == null) {
+					trees++;
+				}
+			}
+
 
 			Set<Integer> visited = new HashSet<>();
 			Set<Integer> unvisited = new HashSet<>(graph.keySet());
